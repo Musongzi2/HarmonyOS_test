@@ -1,5 +1,5 @@
 {
   "src": [
-    "pages/Index","pages/Launcher"
+    "pages/Index","pages/Launcher","pages/user/UserDetailPage","pages/user/UserListPage"
   ]
 }

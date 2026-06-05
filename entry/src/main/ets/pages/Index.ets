@@ -1,6 +1,11 @@
-import Router from '@system.router';
 import { User } from '../model/User';
 import { router } from '@kit.ArkUI';
+
+interface UserParams {
+  id: number
+  name: string
+  avatar?: string
+}
 
 @Entry
 @Component
@@ -8,10 +13,15 @@ struct Index {
   @State message: string = 'Hello World';
 
   aboutToAppear() {
-    const params = router.getParams() as Record<string, string>
-    console.info('接收到的参数:', JSON.stringify(params))
-    if (params && params['name']) {
-      this.message = '欢迎, ' + params['name']
+    const params = router.getParams()
+    if (params) {
+      const raw = params as UserParams
+      const user = new User()
+      user.id = raw.id ?? 0
+      user.name = raw.name ?? ''
+      user.avatar = raw.avatar
+      console.info('testTag:', '接收到的用户:id=' + user.id + ',name=' + user.name)
+      this.message = '欢迎, ' + user.displayName
     }
   }
 
@@ -28,7 +38,7 @@ struct Index {
         })
         .onClick(() => {
           // this.message = 'Welcome';
-          Router.back()
+          router.back()
         })
     }
     .height('100%')

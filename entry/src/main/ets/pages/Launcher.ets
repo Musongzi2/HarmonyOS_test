@@ -40,7 +40,14 @@ struct Launcher {
 
       Text(this.user.displayName)
       Button("其他登陆").enabled(this.user.id == 1).onClick(() => {
-        router.pushUrl({ url: 'pages/Index', params: this.user })
+        router.pushUrl({
+          url: 'pages/Index',
+          params: {
+            id: this.user.id,
+            name: this.user.name,
+            avatar: this.user.avatar
+          }
+        })
           .then(() => {
             console.info('页面跳转成功');
           })
