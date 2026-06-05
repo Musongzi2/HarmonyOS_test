@@ -4,13 +4,12 @@ import { RequestBuilder } from '../dsl/RequestBuilder'
 
 export class UserApi {
   @Cache({ ttl: 5 * 60 * 1000 }) // 缓存5分钟
-  @GET('/user/profile')
-  getProfile(userId: number): RequestBuilder {
-    return null as any
-  }
+  @GET('/user/profile', ['userId'])
+  getProfile(userId: number): RequestBuilder { return undefined! }
 
-  @POST('/user/update')
-  updateProfile(data: ESObject): RequestBuilder {
-    return null as any
-  }
+  @GET('/api/users')
+  getUsers(): RequestBuilder { return undefined! }
+
+  @POST('/api/users')
+  createUser(data: ESObject): RequestBuilder { return undefined! }
 }

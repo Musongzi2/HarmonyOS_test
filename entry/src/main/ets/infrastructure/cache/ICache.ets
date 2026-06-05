@@ -1,6 +1,14 @@
 // infrastructure/cache/ICache.ets
 
 /**
+ * 缓存级别
+ */
+export enum CacheLevel {
+  MEMORY = 'MEMORY',
+  DISK = 'DISK'
+}
+
+/**
  * 通用缓存接口
  * 不关心具体存储方式，只定义行为
  */

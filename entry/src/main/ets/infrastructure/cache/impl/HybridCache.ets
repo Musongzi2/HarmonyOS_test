@@ -1,5 +1,5 @@
 // infrastructure/cache/impl/HybridCache.ets
-import { ICache } from '../ICache'
+import { ICache, CacheOptions } from '../ICache'
 
 export class HybridCache<K, V> implements ICache<K, V> {
   private memoryCache: ICache<K, V>
@@ -11,18 +11,15 @@ export class HybridCache<K, V> implements ICache<K, V> {
   }
 
   async get(key: K): Promise<V | null> {
-    // 1. 查内存
-    let value = await this.memoryCache.get(key)
+    let value: V | null = await this.memoryCache.get(key)
     if (value !== null) {
       console.log('[HybridCache] Memory hit')
       return value
     }
 
-    // 2. 查磁盘
     value = await this.diskCache.get(key)
     if (value !== null) {
       console.log('[HybridCache] Disk hit')
-      // 回填内存
       await this.memoryCache.set(key, value)
       return value
     }
@@ -31,12 +28,34 @@ export class HybridCache<K, V> implements ICache<K, V> {
   }
 
   async set(key: K, value: V, options?: CacheOptions): Promise<void> {
-    // 同时写入内存和磁盘
     await Promise.all([
       this.memoryCache.set(key, value, options),
       this.diskCache.set(key, value, options)
     ])
   }
 
-  // ... 其他方法
+  async delete(key: K): Promise<boolean> {
+    const memDeleted: boolean = await this.memoryCache.delete(key)
+    const diskDeleted: boolean = await this.diskCache.delete(key)
+    return memDeleted || diskDeleted
+  }
+
+  async clear(): Promise<void> {
+    await Promise.all([
+      this.memoryCache.clear(),
+      this.diskCache.clear()
+    ])
+  }
+
+  async has(key: K): Promise<boolean> {
+    const inMemory: boolean = await this.memoryCache.has(key)
+    if (inMemory) return true
+    return this.diskCache.has(key)
+  }
+
+  async size(): Promise<number> {
+    const memSize: number = await this.memoryCache.size()
+    const diskSize: number = await this.diskCache.size()
+    return memSize + diskSize
+  }
 }

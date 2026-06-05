@@ -41,5 +41,26 @@ export class DiskCache<K, V> implements ICache<K, V> {
     await this.adapter.write(key, data)
   }
 
-  // ... 其他方法
+  async delete(key: K): Promise<boolean> {
+    return this.adapter.remove(key)
+  }
+
+  async clear(): Promise<void> {
+    await this.adapter.clear()
+    this.usedSize = 0
+  }
+
+  async has(key: K): Promise<boolean> {
+    const data: string | null = await this.adapter.read(key)
+    return data !== null
+  }
+
+  async size(): Promise<number> {
+    return this.usedSize
+  }
+
+  private async evictOldest(requiredSize: number): Promise<void> {
+    // 简化的驱逐策略
+    console.log('DiskCache: evicting old entries for', requiredSize, 'bytes')
+  }
 }
